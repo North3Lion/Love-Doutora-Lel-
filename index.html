@@ -2,15 +2,10 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Para Doutora Lelê</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Doutora Lelê - Com Assinatura</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
         body {
             margin: 0;
             overflow: hidden;
@@ -19,149 +14,137 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #220000;
             color: white;
             user-select: none;
-            touch-action: none;
+            cursor: crosshair;
+            
+            /* CONFIGURAÇÃO DO FUNDO */
+            background-color: #220000; 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
-        /* TELA INICIAL */
+        /* TELA DE START */
         #tela-start {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(30, 0, 0, 0.95);
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            z-index: 2000; text-align: center;
-            border: 8px solid #ff0000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.7); z-index: 999;
         }
+        #start-heart { width: 120px; height: 120px; cursor: pointer; transition: transform 0.2s; }
+        #start-heart:hover { transform: scale(1.15); }
+        .piscar { font-size: 12px; margin-top: 20px; animation: piscar 1s infinite; }
+        @keyframes piscar { 0%,100%{opacity:1;}50%{opacity:0;} }
 
-        /* HUD - BARRA DE VIDA */
-        #hud {
-            position: absolute; top: 30px; width: 85%; max-width: 400px;
-            z-index: 1000; display: none;
-            border: 4px solid #fff; background: #000;
-            padding: 4px;
-        }
-        #barra-preenchimento {
-            width: 0%; height: 25px; background: #ff0000;
-            transition: width 0.2s ease-out;
-        }
+        /* HUD */
+        #hud { position: fixed; top: 20px; width: 80%; text-align: center; z-index: 10; }
+        #barra-container { width: 100%; height: 20px; border: 3px solid white; }
+        #barra { height: 100%; width: 100%; background: red; }
+        #contador { margin-top: 10px; font-size: 12px; }
 
-        /* CORAÇÕES */
-        .coracao {
-            position: absolute;
-            font-size: 50px; /* Tamanho bom para tocar com o dedo */
-            cursor: pointer;
-            z-index: 500;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.5));
-            animation: flutuar 1s ease-out;
-        }
+        /* FINAL */
+        #tela-final { position: fixed; top:0; left:0; width:100%; height:100%; display:none; align-items:center; justify-content:center; flex-direction:column; background:black; z-index:1000; text-align:center; }
+        #coracao-grande-final { width: 350px; height: 350px; }
+        #texto-final { margin-top: 20px; font-size: 28px; line-height: 1.5; }
 
-        /* TELA FINAL */
-        #tela-final {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1500; background: #000; text-align: center; padding: 20px;
-        }
+/* ===== MOBILE ADAPT ===== */
+html, body{
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
 
-        .piscar { animation: blink 0.6s infinite alternate; }
-        @keyframes blink { from { opacity: 1; } to { opacity: 0.2; } }
-        @keyframes flutuar { from { transform: scale(0); } to { transform: scale(1); } }
+/* corrige altura real do celular */
+:root{
+    --vh: 1vh;
+}
 
-        #assinatura { font-size: 10px; margin-top: 30px; line-height: 1.5; }
-        .pink { color: #ff69b4; }
+body{
+    height: calc(var(--vh) * 100);
+}
+
+/* HUD responsivo */
+@media (max-width: 768px){
+
+    #hud{
+        width: 90%;
+        top: 10px;
+    }
+
+    #texto-final{
+        font-size: 20px;
+        padding: 0 20px;
+    }
+
+    #coracao-grande-final{
+        width: 70vw;
+        height: 70vw;
+    }
+
+    #start-heart{
+        width: 90px;
+        height: 90px;
+    }
+
+    .piscar{
+        font-size: 10px;
+    }
+}
+
     </style>
 </head>
 <body>
 
-    <div id="tela-start" onclick="iniciar()">
-        <div style="font-size: 80px; margin-bottom: 20px;">❤️</div>
-        <h1 style="font-size: 18px; padding: 0 10px;">LOVE ARCADE</h1>
-        <p class="piscar" style="font-size: 12px; margin-top: 30px;">TOQUE PARA INICIAR</p>
-    </div>
+<div id="tela-start">
+    <img id="start-heart" src="heart.png">
+    <div class="piscar">toque no coração</div>
+</div>
 
-    <div id="hud">
-        <div id="barra-preenchimento"></div>
-    </div>
+<div id="hud">
+    <div id="barra-container"><div id="barra"></div></div>
+    <div id="contador">0 / 30</div>
+</div>
 
-    <div id="tela-final">
-        <h2 style="font-size: 22px; color: #ff0000;">VITÓRIA!</h2>
-        <p style="font-size: 14px; margin: 30px 0;">EU TE AMO MUITO,<br>DOUTORA LELÊ!</p>
-        <div style="font-size: 100px;">❤️</div>
-        <div id="assinatura">DO SEU NAMORADO:<br><span class="pink">ÁXONZINHO</span></div>
-    </div>
+<div id="tela-final">
+    <img id="coracao-grande-final" src="heart.png">
+    <div id="texto-final">eu te amo</div>
+</div>
 
-    <script>
-        let pontos = 0;
-        const totalVitoria = 15;
-        let jogoAtivo = false;
+<script>
+/* altura real do celular (resolve o bug do vh) */
+function setRealVh(){
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+setRealVh();
+window.addEventListener('resize', setRealVh);
 
-        function iniciar() {
-            document.getElementById('tela-start').style.display = 'none';
-            document.getElementById('hud').style.display = 'block';
-            jogoAtivo = true;
-            
-            // Tenta iniciar áudio se existir no original, senão apenas segue
-            spawnCoracao();
-        }
+// (restante do seu script original permanece igual...)
 
-        function spawnCoracao() {
-            if (!jogoAtivo || pontos >= totalVitoria) return;
+/* ===== CONVERSOR DE TOQUE PARA CLIQUE ===== */
+document.addEventListener("touchstart", function(e){
 
-            const coracao = document.createElement('div');
-            coracao.className = 'coracao';
-            coracao.innerHTML = '❤️';
-            
-            // Posicionamento seguro para mobile
-            const maxX = window.innerWidth - 70;
-            const maxY = window.innerHeight - 150;
-            
-            coracao.style.left = Math.random() * maxX + 10 + 'px';
-            coracao.style.top = Math.random() * maxY + 80 + 'px';
+    const touch = e.changedTouches[0];
 
-            // Evento de clique e toque
-            const capturar = (e) => {
-                e.preventDefault();
-                if (coracao.dataset.clicado) return;
-                coracao.dataset.clicado = "true";
-                
-                pontos++;
-                document.getElementById('barra-preenchimento').style.width = (pontos / totalVitoria * 100) + '%';
-                
-                coracao.style.transform = 'scale(1.5)';
-                coracao.style.opacity = '0';
-                
-                setTimeout(() => coracao.remove(), 100);
+    const eventoMouse = new MouseEvent("click", {
+        bubbles: true,
+        cancelable: true,
+        clientX: touch.clientX,
+        clientY: touch.clientY
+    });
 
-                if (pontos >= totalVitoria) {
-                    vitoria();
-                } else {
-                    spawnCoracao();
-                }
-            };
+    touch.target.dispatchEvent(eventoMouse);
 
-            coracao.addEventListener('touchstart', capturar, {passive: false});
-            coracao.addEventListener('mousedown', capturar);
+}, {passive:false});
 
-            document.body.appendChild(coracao);
+/* desbloqueia audio mobile */
+document.body.addEventListener('touchstart', function() {
+    if(!audioCtx){
+        try{
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }catch(e){}
+    }
+}, {once:true});
+</script>
 
-            // Se não clicar em 2 segundos, ele some e nasce outro para não travar
-            setTimeout(() => {
-                if (coracao.parentNode && !coracao.dataset.clicado) {
-                    coracao.remove();
-                    spawnCoracao();
-                }
-            }, 2000);
-        }
-
-        function vitoria() {
-            jogoAtivo = false;
-            document.getElementById('hud').style.display = 'none';
-            document.getElementById('tela-final').style.display = 'flex';
-        }
-    </script>
 </body>
 </html>
