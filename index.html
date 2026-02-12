@@ -1,104 +1,167 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Corações</title>
-<style>
-  html,body{margin:0;padding:0;height:100%;background:#0b0b14;overflow:hidden;font-family:Arial,Helvetica,sans-serif}
-  #tela-start{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#1a1a2e 0%,#0b0b14 70%);color:#fff;z-index:5}
-  #tela-start .card{padding:24px 28px;border-radius:18px;background:rgba(255,255,255,.06);backdrop-filter:blur(8px);text-align:center}
-  #tela-start h1{margin:0 0 8px 0;font-size:28px}
-  #tela-start p{margin:0;font-size:14px;opacity:.85}
-  #hud{position:fixed;left:12px;right:12px;top:12px;height:16px;border-radius:10px;background:rgba(255,255,255,.15);overflow:hidden;z-index:3}
-  #bar{height:100%;width:0%;background:linear-gradient(90deg,#ff4d88,#ff7aa8);transition:width .2s ease}
-  #mensagem{position:fixed;inset:0;display:none;align-items:center;justify-content:center;color:#fff;font-size:42px;text-align:center;z-index:6}
-  #campo{position:fixed;inset:0}
-  .heart{position:absolute;user-select:none;-webkit-user-drag:none;touch-action:manipulation}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para Doutora Lelê</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #220000;
+            color: white;
+            user-select: none;
+            touch-action: none;
+        }
+
+        /* TELA INICIAL */
+        #tela-start {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(30, 0, 0, 0.95);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 2000; text-align: center;
+            border: 8px solid #ff0000;
+        }
+
+        /* HUD - BARRA DE VIDA */
+        #hud {
+            position: absolute; top: 30px; width: 85%; max-width: 400px;
+            z-index: 1000; display: none;
+            border: 4px solid #fff; background: #000;
+            padding: 4px;
+        }
+        #barra-preenchimento {
+            width: 0%; height: 25px; background: #ff0000;
+            transition: width 0.2s ease-out;
+        }
+
+        /* CORAÇÕES */
+        .coracao {
+            position: absolute;
+            font-size: 50px; /* Tamanho bom para tocar com o dedo */
+            cursor: pointer;
+            z-index: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.5));
+            animation: flutuar 1s ease-out;
+        }
+
+        /* TELA FINAL */
+        #tela-final {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1500; background: #000; text-align: center; padding: 20px;
+        }
+
+        .piscar { animation: blink 0.6s infinite alternate; }
+        @keyframes blink { from { opacity: 1; } to { opacity: 0.2; } }
+        @keyframes flutuar { from { transform: scale(0); } to { transform: scale(1); } }
+
+        #assinatura { font-size: 10px; margin-top: 30px; line-height: 1.5; }
+        .pink { color: #ff69b4; }
+    </style>
 </head>
 <body>
 
-<div id="tela-start">
-  <div class="card">
-    <h1>Toque para começar ❤️</h1>
-    <p>Estoure os corações até completar a barra</p>
-  </div>
-</div>
+    <div id="tela-start" onclick="iniciar()">
+        <div style="font-size: 80px; margin-bottom: 20px;">❤️</div>
+        <h1 style="font-size: 18px; padding: 0 10px;">LOVE ARCADE</h1>
+        <p class="piscar" style="font-size: 12px; margin-top: 30px;">TOQUE PARA INICIAR</p>
+    </div>
 
-<div id="hud"><div id="bar"></div></div>
-<div id="mensagem">EU TE AMO 💖</div>
-<div id="campo"></div>
+    <div id="hud">
+        <div id="barra-preenchimento"></div>
+    </div>
 
-<script>
-// ================= IMAGEM EMBUTIDA =================
-const HEART_SRC = "data:image/png;base64,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";
+    <div id="tela-final">
+        <h2 style="font-size: 22px; color: #ff0000;">VITÓRIA!</h2>
+        <p style="font-size: 14px; margin: 30px 0;">EU TE AMO MUITO,<br>DOUTORA LELÊ!</p>
+        <div style="font-size: 100px;">❤️</div>
+        <div id="assinatura">DO SEU NAMORADO:<br><span class="pink">ÁXONZINHO</span></div>
+    </div>
 
-// ================= LÓGICA DO JOGO =================
-const campo = document.getElementById('campo');
-const start = document.getElementById('tela-start');
-const bar = document.getElementById('bar');
-const msg = document.getElementById('mensagem');
-let progresso = 0; let rodando = false; let spawnTimer;
+    <script>
+        let pontos = 0;
+        const totalVitoria = 15;
+        let jogoAtivo = false;
 
-function iniciarJogo(){
-  if(rodando) return; rodando = true;
-  start.style.display = 'none';
-  spawnTimer = setInterval(criarCoracao, 700);
-}
+        function iniciar() {
+            document.getElementById('tela-start').style.display = 'none';
+            document.getElementById('hud').style.display = 'block';
+            jogoAtivo = true;
+            
+            // Tenta iniciar áudio se existir no original, senão apenas segue
+            spawnCoracao();
+        }
 
-function criarCoracao(){
-  const img = document.createElement('img');
-  img.className = 'heart';
-  img.src = HEART_SRC;
-  const size = Math.max(56, Math.min(120, window.innerWidth*0.18));
-  img.style.width = size+'px';
-  img.style.height = size+'px';
-  const x = Math.random()*(window.innerWidth - size);
-  const y = Math.random()*(window.innerHeight - size);
-  img.style.left = x+'px'; img.style.top = y+'px';
-  campo.appendChild(img);
+        function spawnCoracao() {
+            if (!jogoAtivo || pontos >= totalVitoria) return;
 
-  const remover = ()=>{ img.remove(); };
-  setTimeout(remover, 3500);
+            const coracao = document.createElement('div');
+            coracao.className = 'coracao';
+            coracao.innerHTML = '❤️';
+            
+            // Posicionamento seguro para mobile
+            const maxX = window.innerWidth - 70;
+            const maxY = window.innerHeight - 150;
+            
+            coracao.style.left = Math.random() * maxX + 10 + 'px';
+            coracao.style.top = Math.random() * maxY + 80 + 'px';
 
-  img.addEventListener('mousedown', ()=>{
-    progresso = Math.min(100, progresso+5);
-    bar.style.width = progresso+'%';
-    img.remove();
-    if(progresso>=100){ finalizar(); }
-  });
-}
+            // Evento de clique e toque
+            const capturar = (e) => {
+                e.preventDefault();
+                if (coracao.dataset.clicado) return;
+                coracao.dataset.clicado = "true";
+                
+                pontos++;
+                document.getElementById('barra-preenchimento').style.width = (pontos / totalVitoria * 100) + '%';
+                
+                coracao.style.transform = 'scale(1.5)';
+                coracao.style.opacity = '0';
+                
+                setTimeout(() => coracao.remove(), 100);
 
-function finalizar(){
-  clearInterval(spawnTimer);
-  document.querySelectorAll('.heart').forEach(h=>h.remove());
-  msg.style.display='flex';
-}
+                if (pontos >= totalVitoria) {
+                    vitoria();
+                } else {
+                    spawnCoracao();
+                }
+            };
 
-// ================= MOBILE TOUCH FIX =================
-function simularClique(x,y){
-  const el = document.elementFromPoint(x,y);
-  if(!el) return;
-  const ev = new MouseEvent('mousedown',{bubbles:true,cancelable:true,clientX:x,clientY:y});
-  el.dispatchEvent(ev);
-}
+            coracao.addEventListener('touchstart', capturar, {passive: false});
+            coracao.addEventListener('mousedown', capturar);
 
-document.addEventListener('touchstart', (e)=>{
-  const t=e.changedTouches[0];
-  simularClique(t.clientX,t.clientY);
-},{passive:true});
+            document.body.appendChild(coracao);
 
-start.addEventListener('click', iniciarJogo);
-start.addEventListener('touchstart', (e)=>{ e.preventDefault(); iniciarJogo(); }, {passive:false});
+            // Se não clicar em 2 segundos, ele some e nasce outro para não travar
+            setTimeout(() => {
+                if (coracao.parentNode && !coracao.dataset.clicado) {
+                    coracao.remove();
+                    spawnCoracao();
+                }
+            }, 2000);
+        }
 
-// desbloqueio de áudio (caso exista AudioContext externo)
-let audioCtx;
-try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
-
-document.body.addEventListener('touchstart', ()=>{
-  if(audioCtx && audioCtx.state==='suspended') audioCtx.resume();
-},{once:true});
-</script>
+        function vitoria() {
+            jogoAtivo = false;
+            document.getElementById('hud').style.display = 'none';
+            document.getElementById('tela-final').style.display = 'flex';
+        }
+    </script>
 </body>
 </html>
